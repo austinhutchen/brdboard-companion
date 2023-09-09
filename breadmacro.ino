@@ -28,7 +28,7 @@ void setup() {
   display.setTextColor(WHITE);
   display.setCursor(0, 0);
   // Display static text
-  display.println("Scrolling Hello");
+  display.println("<0xf> WAITS.");
   display.display();
   delay(100);
 }
