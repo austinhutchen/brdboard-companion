@@ -37,6 +37,7 @@ void loop() {
   buttonRState = digitalRead(buttonRPin);
   buttonLState = digitalRead(buttonLPin);
   if (buttonRState == HIGH && buttonLState != HIGH) {
+    // where the source code for command 1 will go
     display.startscrollright(0x00, 0x0F);
     delay(2000);
     display.stopscroll();
@@ -50,6 +51,9 @@ void loop() {
     delay(1000);
     display.startscrolldiagleft(0x00, 0x07);
     delay(2000);
+  }
+  else if(buttonRState ==HIGH && buttonLState ==HIGH){
+   // lcd display matrix activation
   }
   // Scroll in various directions, pausing in-between:
 
