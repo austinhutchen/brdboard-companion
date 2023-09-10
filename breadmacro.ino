@@ -35,7 +35,7 @@ void setup() {
 
 void loop() {
   if (digitalRead(buttonRPin) == HIGH && digitalRead(buttonLPin) != HIGH) {
-    display.println("<0xf> RIGHT.");
+    display.println("<0x3C> RIGHT.");
     display.display();
     delay(500);
     display.display();
