@@ -34,17 +34,22 @@ void setup() {
 }
 
 void loop() {
-  buttonRState = digitalRead(buttonRPin);
-  buttonLState = digitalRead(buttonLPin);
-  if (buttonRState == HIGH && buttonLState != HIGH) {
-    // where the source code for command 1 will go
+  while (digitalRead(buttonRPin) == HIGH && digitalRead(buttonLPin) != HIGH) {
+    display.println("<0xf> RIGHT.");
+    display.display();
+    delay(1000);
+    display.display();
     display.startscrollright(0x00, 0x0F);
     delay(2000);
     display.stopscroll();
     delay(1000);
     display.startscrolldiagright(0x00, 0x07);
     delay(2000);
-  } else if (buttonRState != HIGH && buttonLState == HIGH) {
+  }
+  while (digitalRead(buttonRPin) != HIGH && digitalRead(buttonLPin) == HIGH) {
+    display.println("<0xf> LEFT.");
+    display.display();
+    delay(1000);
     display.startscrollleft(0x00, 0x0F);
     delay(2000);
     display.stopscroll();
@@ -52,11 +57,12 @@ void loop() {
     display.startscrolldiagleft(0x00, 0x07);
     delay(2000);
   }
-  else if(buttonRState ==HIGH && buttonLState ==HIGH){
-   // lcd display matrix activation
-  }
   // Scroll in various directions, pausing in-between:
 
-  display.stopscroll();
+  display.println("<0xf> MID.");
+  display.display();
+  delay(1000);
+  // implement lcd displayu
+
   delay(1000);
 }
