@@ -34,35 +34,36 @@ void setup() {
 }
 
 void loop() {
-  while (digitalRead(buttonRPin) == HIGH && digitalRead(buttonLPin) != HIGH) {
+  if (digitalRead(buttonRPin) == HIGH && digitalRead(buttonLPin) != HIGH) {
     display.println("<0xf> RIGHT.");
     display.display();
-    delay(1000);
+    delay(500);
     display.display();
     display.startscrollright(0x00, 0x0F);
-    delay(2000);
-    display.stopscroll();
     delay(1000);
+    display.stopscroll();
+    delay(500);
     display.startscrolldiagright(0x00, 0x07);
-    delay(2000);
+    delay(1000);
   }
-  while (digitalRead(buttonRPin) != HIGH && digitalRead(buttonLPin) == HIGH) {
+  if (digitalRead(buttonRPin) != HIGH && digitalRead(buttonLPin) == HIGH) {
     display.println("<0xf> LEFT.");
     display.display();
-    delay(1000);
+    delay(500);
     display.startscrollleft(0x00, 0x0F);
-    delay(2000);
-    display.stopscroll();
     delay(1000);
+    display.stopscroll();
+    delay(500);
     display.startscrolldiagleft(0x00, 0x07);
-    delay(2000);
+    delay(1000);
   }
   // Scroll in various directions, pausing in-between:
-
+ if (digitalRead(buttonRPin) == HIGH && digitalRead(buttonLPin) == HIGH){
   display.println("<0xf> MID.");
   display.display();
-  delay(1000);
+  delay(500);
+ }
   // implement lcd displayu
 
-  delay(1000);
+  delay(500);
 }
