@@ -42,7 +42,7 @@ void setup() {
 }
 
 void loop() {
-
+C1:
   if (digitalRead(sensorPin1) == LOW) {
     display.println("SOUND [0x7]. ");
     display.display();
@@ -78,20 +78,16 @@ void loop() {
     delay(1000);
     display.stopscroll();
   }
-  if (digitalRead(buttonRPin) == HIGH && digitalRead(buttonLPin) == HIGH) {
-    display.println("<0x3C> MID.");
-    display.display();
-  }
+
   // If pin goes LOW, sound is detected
  
   if(digitalRead(exitpin)==HIGH){
- display.clearDisplay();
-  delay(300);
-    display.setCursor(0, 0);
+  display.setCursor(0, 0);
   // Display static text
+   display.clearDisplay();
   display.println("<0xf> WAITS.");
   display.display();
   delay(100);
-  return loop();
+  goto C1;
   }
 }
