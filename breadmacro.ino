@@ -46,7 +46,7 @@ void loop() {
     display.display();
     // If 25ms have passed since last LOW state, it means that
     // the clap is detected and not due to any spurious sounds
-
+    display.stopscroll();
     // Remember when last event happened
     lastEvent1 = millis();
   }
@@ -55,11 +55,10 @@ void loop() {
     display.display();
     // If 25ms have passed since last LOW state, it means that
     // the clap is detected and not due to any spurious sounds
-
+    display.stopscroll();
     // Remember when last event happened
     lastEvent2 = millis();
   }
-  delay(500);
   if (digitalRead(buttonRPin) == HIGH && digitalRead(buttonLPin) != HIGH) {
     display.println("<0x3C> RIGHT.");
     display.display();
