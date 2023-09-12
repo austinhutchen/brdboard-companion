@@ -11,10 +11,16 @@ const int buttonRPin = 3; // the number of the pushbutton pin
 const int buttonLPin = 6; // the number of the pushbutton pin
 int buttonLState = 0;     // variable for reading the pushbutton status
 int buttonRState = 0;
-
+#define sensorPin1 8
+#define sensorPin2 7
+// Variable to store the time when last event happened
+unsigned long lastEvent1 = 0;
+unsigned long lastEvent2 = 0;
 void setup() {
   Serial.begin(115200);
   pinMode(buttonRPin, INPUT);
+  pinMode(sensorPin1, INPUT);
+  pinMode(sensorPin2, INPUT);
   pinMode(buttonLPin, INPUT);
   if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
     Serial.println(F("SSD1306 allocation failed"));
@@ -34,11 +40,33 @@ void setup() {
 }
 
 void loop() {
+  int sensorData1 = digitalRead(sensorPin1);
+  int sensorData2 = digitalRead(sensorPin2);
+  // If pin goes LOW, sound is detected
+  if (sensorData1 == LOW) {
+    display.println("LEFT MIC DETECTED SOUND [0x7].");
+    display.display();
+    delay(500);
+    // If 25ms have passed since last LOW state, it means that
+    // the clap is detected and not due to any spurious sounds
+
+    // Remember when last event happened
+    lastEvent1 = millis();
+  }
+  if (sensorData2 == LOW) {
+    display.println("LEFT MIC DETECTED SOUND [0x7].");
+     display.display();
+    delay(500);
+    // If 25ms have passed since last LOW state, it means that
+    // the clap is detected and not due to any spurious sounds
+
+    // Remember when last event happened
+    lastEvent2 = millis();
+  }
   if (digitalRead(buttonRPin) == HIGH && digitalRead(buttonLPin) != HIGH) {
     display.println("<0x3C> RIGHT.");
     display.display();
     delay(500);
-    display.display();
     display.startscrollright(0x00, 0x0F);
     delay(1000);
     display.stopscroll();
