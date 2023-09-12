@@ -13,6 +13,7 @@ int buttonLState = 0;     // variable for reading the pushbutton status
 int buttonRState = 0;
 #define sensorPin1 7
 #define sensorPin2 8
+#define exitpin 2
 // Variable to store the time when last event happened
 unsigned long lastEvent1 = 0;
 unsigned long lastEvent2 = 0;
@@ -22,6 +23,7 @@ void setup() {
   pinMode(sensorPin1, INPUT);
   pinMode(sensorPin2, INPUT);
   pinMode(buttonLPin, INPUT);
+    pinMode(exitpin, INPUT);
   if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3D for 128x64
     Serial.println(F("SSD1306 allocation failed"));
     for (;;)
@@ -40,7 +42,7 @@ void setup() {
 }
 
 void loop() {
-  // If pin goes LOW, sound is detected
+
   if (digitalRead(sensorPin1) == LOW) {
     display.println("SOUND [0x7]. ");
     display.display();
@@ -58,6 +60,7 @@ void loop() {
     display.stopscroll();
     // Remember when last event happened
     lastEvent2 = millis();
+
   }
   if (digitalRead(buttonRPin) == HIGH && digitalRead(buttonLPin) != HIGH) {
     display.println("<0x3C> RIGHT.");
@@ -66,7 +69,6 @@ void loop() {
     display.startscrollright(0x00, 0x0F);
     delay(1000);
     display.stopscroll();
-    display.startscrolldiagright(0x00, 0x07);
   }
   if (digitalRead(buttonRPin) != HIGH && digitalRead(buttonLPin) == HIGH) {
     display.println("<0x3C>  LEFT.");
@@ -75,14 +77,21 @@ void loop() {
     display.startscrollleft(0x00, 0x0F);
     delay(1000);
     display.stopscroll();
-    display.startscrolldiagleft(0x00, 0x07);
   }
-  // Scroll in various directions, pausing in-between:
   if (digitalRead(buttonRPin) == HIGH && digitalRead(buttonLPin) == HIGH) {
     display.println("<0x3C> MID.");
     display.display();
   }
-  // implement lcd displayu
-
-  delay(500);
+  // If pin goes LOW, sound is detected
+ 
+  if(digitalRead(exitpin)==HIGH){
+ display.clearDisplay();
+  delay(300);
+    display.setCursor(0, 0);
+  // Display static text
+  display.println("<0xf> WAITS.");
+  display.display();
+  delay(100);
+  return loop();
+  }
 }
