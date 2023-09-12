@@ -11,8 +11,8 @@ const int buttonRPin = 3; // the number of the pushbutton pin
 const int buttonLPin = 6; // the number of the pushbutton pin
 int buttonLState = 0;     // variable for reading the pushbutton status
 int buttonRState = 0;
-#define sensorPin1 8
-#define sensorPin2 7
+#define sensorPin1 7
+#define sensorPin2 8
 // Variable to store the time when last event happened
 unsigned long lastEvent1 = 0;
 unsigned long lastEvent2 = 0;
@@ -40,29 +40,26 @@ void setup() {
 }
 
 void loop() {
-  int sensorData1 = digitalRead(sensorPin1);
-  int sensorData2 = digitalRead(sensorPin2);
   // If pin goes LOW, sound is detected
-  if (sensorData1 == LOW) {
-    display.println("LEFT MIC DETECTED SOUND [0x7].");
+  if (digitalRead(sensorPin1) == LOW) {
+    display.println("SOUND [0x7]. ");
     display.display();
-    delay(500);
     // If 25ms have passed since last LOW state, it means that
     // the clap is detected and not due to any spurious sounds
 
     // Remember when last event happened
     lastEvent1 = millis();
   }
-  if (sensorData2 == LOW) {
-    display.println("LEFT MIC DETECTED SOUND [0x7].");
-     display.display();
-    delay(500);
+  if (digitalRead(sensorPin2) == LOW) {
+    display.println("SOUND [0x8].");
+    display.display();
     // If 25ms have passed since last LOW state, it means that
     // the clap is detected and not due to any spurious sounds
 
     // Remember when last event happened
     lastEvent2 = millis();
   }
+  delay(500);
   if (digitalRead(buttonRPin) == HIGH && digitalRead(buttonLPin) != HIGH) {
     display.println("<0x3C> RIGHT.");
     display.display();
