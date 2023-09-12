@@ -66,9 +66,7 @@ void loop() {
     display.startscrollright(0x00, 0x0F);
     delay(1000);
     display.stopscroll();
-    delay(500);
     display.startscrolldiagright(0x00, 0x07);
-    delay(1000);
   }
   if (digitalRead(buttonRPin) != HIGH && digitalRead(buttonLPin) == HIGH) {
     display.println("<0x3C>  LEFT.");
@@ -77,15 +75,12 @@ void loop() {
     display.startscrollleft(0x00, 0x0F);
     delay(1000);
     display.stopscroll();
-    delay(500);
     display.startscrolldiagleft(0x00, 0x07);
-    delay(1000);
   }
   // Scroll in various directions, pausing in-between:
   if (digitalRead(buttonRPin) == HIGH && digitalRead(buttonLPin) == HIGH) {
     display.println("<0x3C> MID.");
     display.display();
-    delay(500);
   }
   // implement lcd displayu
 
