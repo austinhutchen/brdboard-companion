@@ -1,8 +1,14 @@
 
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include <HID-Project.h>
+#include <HID-Settings.h>
+#define ADC_REF  5 // reference voltage of ADC is 5v.If the Vcc switch on the seeeduino
+#define GROVE_VCC 5    // VCC of the grove interface is normally 5v
+#define FULL_ANGLE 300 // full value of the rotary angle is 300 degrees
+#include <HID.h>
 #include <Wire.h>
-
+#include <math.h>
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 32 // OLED display height, in pixels
 
@@ -12,15 +18,32 @@ const int buttonRPin = 3; // the number of the pushbutton pin
 const int buttonLPin = 6; // the number of the pushbutton pin
 int buttonLState = 0;     // variable for reading the pushbutton status
 int buttonRState = 0;
+int potentiometerPIN = 2;
+#define ROTARY_ANGLE_SENSOR A2
+int pvalue = 0; // value initialized to store the coming value from the sensor
+value =
+    analogRead(potentiometerPIN); // It reads the value from the sensor, ranging
+                                  // from 0 to 1023 convert to volume
 #define sensorPin1 7
 #define sensorPin2 8
 #define exitpin 2
 // Variable to store the time when last event happened
 unsigned long lastEvent1 = 0;
 unsigned long lastEvent2 = 0;
-void setup(void) {
+/************************************************************************/
+/*Function: Get the angle between the mark and the starting position    */
+/*Parameter:-void                                                       */
+/*Return:   -int,the range of degrees is 0~300                          */
+int getDegree() {
+  int sensor_value = analogRead(ROTARY_ANGLE_SENSOR);
+  float voltage;
+  voltage = (float)sensor_value * ADC_REF / 1023;
+  float degrees = (voltage * FULL_ANGLE) / GROVE_VCC;
+  return degrees;
+}
 
-  Serial.begin(115200);
+void setup(void) {
+  Serial.begin(9600);
   pinMode(buttonRPin, INPUT);
   pinMode(sensorPin1, INPUT);
   pinMode(sensorPin2, INPUT);
@@ -41,10 +64,28 @@ void setup(void) {
   display.println("<0xf> WAITS.");
   display.display();
   delay(100);
+  pinsInit();
 }
-
+void pinsInit() {
+  pinMode(ROTARY_ANGLE_SENSOR, INPUT);
+  pinMode(LED, OUTPUT);
+}
 void loop(void) {
+
   while (true) {
+    int degrees;
+    degrees = getDegree();
+    Serial.println(degrees);
+
+    /* this will be the volume outputted to the laptop */
+
+    int brightness;
+    /* Normalise to 255 (max brightness)*/
+    brightness = map(degrees, 0, FULL_ANGLE, 0, 255);
+    controlBrightness(brightness);
+
+    /* sleep for half a second */
+    delay(500);
     int soundValue = 0; // create variable to store many different readings
     for (int i = 0; i < 32; i++) // create a for loop to read
     {
