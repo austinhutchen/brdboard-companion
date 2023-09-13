@@ -1,9 +1,8 @@
 
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-#include <HID-Project.h>
-#include <HID-Settings.h>
-#define ADC_REF  5 // reference voltage of ADC is 5v.If the Vcc switch on the seeeduino
+#define ADC_REF                                                                \
+  5 // reference voltage of ADC is 5v.If the Vcc switch on the seeeduino
 #define GROVE_VCC 5    // VCC of the grove interface is normally 5v
 #define FULL_ANGLE 300 // full value of the rotary angle is 300 degrees
 #include <HID.h>
@@ -21,9 +20,8 @@ int buttonRState = 0;
 int potentiometerPIN = 2;
 #define ROTARY_ANGLE_SENSOR A2
 int pvalue = 0; // value initialized to store the coming value from the sensor
-value =
-    analogRead(potentiometerPIN); // It reads the value from the sensor, ranging
-                                  // from 0 to 1023 convert to volume
+// It reads the value from the sensor, ranging
+// from 0 to 1023 convert to volume
 #define sensorPin1 7
 #define sensorPin2 8
 #define exitpin 2
@@ -66,94 +64,65 @@ void setup(void) {
   delay(100);
   pinsInit();
 }
-void pinsInit() {
-  pinMode(ROTARY_ANGLE_SENSOR, INPUT);
-  pinMode(LED, OUTPUT);
-}
+void pinsInit() { pinMode(ROTARY_ANGLE_SENSOR, INPUT); }
 void loop(void) {
 
-  while (true) {
-    int degrees;
-    degrees = getDegree();
-    Serial.println(degrees);
+  int degrees;
+  degrees = getDegree();
+  Serial.println(degrees);
 
-    /* this will be the volume outputted to the laptop */
+  /* this will be the volume outputted to the laptop */
 
-    int brightness;
-    /* Normalise to 255 (max brightness)*/
-    brightness = map(degrees, 0, FULL_ANGLE, 0, 255);
-    controlBrightness(brightness);
+  int brightness;
+  /* Normalise to 255 (max brightness)*/
 
-    /* sleep for half a second */
+  /* sleep for half a second */
+  delay(500);
+  int soundValue = 0; // create variable to store many different readings
+  for (int i = 0; i < 32; i++) // create a for loop to read
+  {
+    soundValue += analogRead(sensorPin2);
+    soundValue += analogRead(sensorPin1);
+  } // read the sound sensor
+
+  soundValue >>= 7; // bitshift operation
+  // if a value higher than 500 is registered, we will print the following
+  // this is done so that we can clearly see if the threshold is met
+  if (soundValue > 500) {
+    display.print("DECIBELS: ");
+    display.println(soundValue); // print the value of sound sensor
+    display.println("         ||        ");
+    display.println("       ||||||      ");
+    display.println("     |||||||||     ");
+    display.println("   |||||||||||||   ");
+    display.println(" ||||||||||||||||| ");
+  }
+
+  if (digitalRead(buttonRPin) == HIGH && digitalRead(buttonLPin) != HIGH) {
+    display.println("<0x3C> RIGHT.");
+    display.display();
     delay(500);
-    int soundValue = 0; // create variable to store many different readings
-    for (int i = 0; i < 32; i++) // create a for loop to read
-    {
-      soundValue += analogRead(sensorPin2);
-      soundValue += analogRead(sensorPin1);
-    } // read the sound sensor
+    display.startscrollright(0x00, 0x0F);
+    delay(1000);
+    display.stopscroll();
+  }
+  if (digitalRead(buttonRPin) != HIGH && digitalRead(buttonLPin) == HIGH) {
+    display.println("<0x3C>  LEFT.");
+    display.display();
+    delay(500);
+    display.startscrollleft(0x00, 0x0F);
+    delay(1000);
+    display.stopscroll();
+  }
 
-    soundValue >>= 10; // bitshift operation
-    // if a value higher than 500 is registered, we will print the following
-    // this is done so that we can clearly see if the threshold is met
-    if (soundValue > 500) {
-      display.println("         ||        ");
-      display.println("       ||||||      ");
-      display.println("     |||||||||     ");
-      display.println("   |||||||||||||   ");
-      display.println(" ||||||||||||||||| ");
-      display.println("   |||||||||||||   ");
-      display.println("     |||||||||     ");
-      display.println("       ||||||      ");
-      display.println("         ||        ");
-      display.print("DECIBELS: ");
-      display.println(soundValue); // print the value of sound sensor
-    }
+  // If pin goes LOW, sound is detected
 
-    if (digitalRead(sensorPin1) == LOW) {
-      display.println("SOUND [0x7]. ");
-      display.display();
-      // If 25ms have passed since last LOW state, it means that
-      // the clap is detected and not due to any spurious sounds
-      display.stopscroll();
-      // Remember when last event happened
-      lastEvent1 = millis();
-    }
-    if (digitalRead(sensorPin2) == LOW) {
-      display.println("SOUND [0x8].");
-      display.display();
-      // If 25ms have passed since last LOW state, it means that
-      // the clap is detected and not due to any spurious sounds
-      display.stopscroll();
-      // Remember when last event happened
-      lastEvent2 = millis();
-    }
-    if (digitalRead(buttonRPin) == HIGH && digitalRead(buttonLPin) != HIGH) {
-      display.println("<0x3C> RIGHT.");
-      display.display();
-      delay(500);
-      display.startscrollright(0x00, 0x0F);
-      delay(1000);
-      display.stopscroll();
-    }
-    if (digitalRead(buttonRPin) != HIGH && digitalRead(buttonLPin) == HIGH) {
-      display.println("<0x3C>  LEFT.");
-      display.display();
-      delay(500);
-      display.startscrollleft(0x00, 0x0F);
-      delay(1000);
-      display.stopscroll();
-    }
-
-    // If pin goes LOW, sound is detected
-
-    if (digitalRead(exitpin) == HIGH) {
-      display.setCursor(0, 0);
-      // Display static text
-      display.clearDisplay();
-      display.println("<0xf> WAITS.");
-      display.display();
-      delay(100);
-    }
+  if (digitalRead(exitpin) == HIGH) {
+    display.setCursor(0, 0);
+    // Display static text
+    display.clearDisplay();
+    display.println("<0xf> WAITS.");
+    display.display();
+    delay(100);
   }
 }
